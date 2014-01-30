@@ -9253,17 +9253,30 @@ if (typeof Handsontable !== 'undefined') {
   var setupListening = function (instance) {
     var scrollHandler = instance.view.wt.wtScrollbars.vertical.scrollHandler; //native scroll
     dragToScroll = new DragToScroll();
+    
+    var bound;
+    var bound1;
+    
     if (scrollHandler === window) {
       //not much we can do currently
       return;
     }
     else if (scrollHandler) {
-      dragToScroll.setBoundaries(scrollHandler.getBoundingClientRect());
+      bound = scrollHandler.getBoundingClientRect();
     }
     else {
-      dragToScroll.setBoundaries(instance.$table[0].getBoundingClientRect());
+      bound1 = instance.$table[0].getBoundingClientRect();
+      
+      bound = { 
+        left: bound1.left, 
+        right: bound1.left + instance.$table[0].scrollWidth, 
+        top: bound1.top, 
+        bottom: bound1.bottom 
+      };
     }
-
+    
+    dragToScroll.setBoundaries(bound);
+    
     dragToScroll.setCallback(function (scrollX, scrollY) {
       if (scrollX < 0) {
         if (scrollHandler) {
